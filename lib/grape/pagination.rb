@@ -2,7 +2,7 @@ module Grape
   module Pagination
     def self.included(base)
       Grape::Endpoint.class_eval do
-        def paginate(collection)
+        def paginate(collection, the_method=nil, the_params={})
           block = Proc.new do |collection|
             links = (header['Link'] || "").split(',').map(&:strip)
             url   = request.url.sub(/\?.*$/, '')
@@ -16,9 +16,14 @@ module Grape
 
             header 'Link', links.join(', ') unless links.empty?
             header 'Total', ApiPagination.total_from(collection)
+            header 'X-Pagination', ApiPagination.pagination_header_from(collection)
           end
 
-          ApiPagination.paginate(collection, params, &block)
+          if the_method.nil?
+            ApiPagination.paginate(collection, params, &block)
+          else
+            ApiPagination.paginate_method(collection, the_method, the_params, params, &block)
+          end
         end
       end
 

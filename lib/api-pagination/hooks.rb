@@ -34,6 +34,11 @@ module ApiPagination
         ApiPagination.instance_variable_set(:@paginator, :kaminari)
       end
 
+      begin; require 'sunspot-rails'; rescue LoadError; end
+      if defined?(Sunspot)
+        ApiPagination.instance_variable_set(:@sunspot, true)
+      end
+
       STDERR.puts <<-EOC unless defined?(Kaminari) || defined?(WillPaginate)
 Warning: api-pagination relies on either Kaminari or WillPaginate. Please
 install either dependency by adding one of the following to your Gemfile:
