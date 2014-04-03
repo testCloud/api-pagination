@@ -58,7 +58,7 @@ module ApiPagination
         last_page: collection.last_page?,
         previous_page: collection.previous_page,
         next_page: collection.next_page
-      }.to_s
+      }.to_json
     end
   end
 end
